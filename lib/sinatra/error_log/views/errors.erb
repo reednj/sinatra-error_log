@@ -1,0 +1,125 @@
+
+<% content_for :header  do %>
+	<link rel="stylesheet" href="/css/admin.css" type="text/css">
+
+	<style type='text/css'>
+		
+		td h3 {
+			color: gray;
+			font-size: 12pt;
+		}
+
+		#error-table {
+			margin: 0 auto;
+			width: 80%;
+		}
+
+		#error-table td {
+			max-width: 400px;
+			padding: 4px;
+		}
+
+		#error-table td.trace {
+			max-width: none;
+			width: 90%;
+		}
+
+		td {
+			word-wrap:break-word;
+		}
+
+		td.params div {
+			margin-left: 16px;
+		}
+
+		td.trace .lib-code {
+			color: #ccc;
+		}
+
+		td.date {
+			min-width: 100px;
+		}
+
+		#main .link-bar {
+			text-transform: uppercase;
+		}
+
+        .section {
+            padding-left: 8px;
+            padding-right: 8px;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        body {
+            margin-top: 8px;
+        }
+
+		.breadcrumb {
+			font-weight: bold;
+		}
+
+	</style>
+
+<% end %>
+
+
+<% content_for :body do %>
+
+	<div class='breadcrumb section'>
+		<a href='/admin'>admin</a> >
+		errors
+	</div>
+
+	<div class='link-bar section'>
+		<a href='/admin/errors/'>app</a> | 
+		<a href='/admin/errors/404'>404</a> | 
+		<a href='/admin/errors/js'>javascript</a>
+		<a style='float:right;' href='/admin/errors/clear/<%= file %>'>clear log</a>
+	</div>
+
+	<table id='error-table'>
+		<tbody>
+		<% error_list.each_with_index do |error, i| %>
+			<tr>
+				<td><b><%= error[:name] %></b></td>
+				<td><%= error[:method] %> <%= error[:path] %> <%= error[:line_number].nil? ? '' : "(line #{error[:line_number]})"  %></td>
+				<td><%= error[:message] %></td>
+				<td><a href='javascript:void(0)' onclick='document.getElementById("trace-<%= i %>").style.display=""'>trace</a></td>
+				<td><a href='javascript:void(0)' onclick='document.getElementById("more-<%= i %>").style.display=""'>more</a></td>
+				<td class='date'><span title='<%= error[:date] %>'><%= Time.parse(error[:date]).age_in_words %> ago</span></td>
+			</tr>
+			<tr id='trace-<%= i %>' style='display:none'>
+				<td class='trace' colspan='6'>
+					<% for trace_line in  (error[:backtrace] || []) %>
+						<div class="<%= trace_line.include?('/gems/') ? 'lib-code' : 'my-code' %>"><%= trace_line %></div>
+					<% end %>
+				</td>
+			</tr>
+			<tr id='more-<%= i %>' style='display:none'>
+				<td class='params' colspan='6'>
+					<div>
+						<h3>request parameters</h3>
+						<div><pre><%== (error[:params] || {}).to_yaml %></pre></div>
+					</div>
+
+					<% if !error[:client].nil? %>
+					<div>
+						<h3>client</h3>
+						<div><pre><%==  error[:client].to_yaml %></pre></div>
+					</div>
+					<% end %>
+
+					<% if !error[:other].nil? %>
+					<div>
+						<h3>other</h3>
+						<div><pre><%==  error[:other].to_yaml %></pre></div>
+					</div>
+					<% end %>
+				</td>
+			</tr>
+		<% end %>
+		</tbody>
+	</table>
+<% end %>
