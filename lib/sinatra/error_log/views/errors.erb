@@ -11,7 +11,7 @@
 
 		#error-table {
 			margin: 0 auto;
-			width: 80%;
+			width: 100%;
 		}
 
 		#error-table td {
@@ -20,8 +20,14 @@
 		}
 
 		#error-table td.trace {
+			font-size: 10pt;
 			max-width: none;
+			padding-left: 24px;
 			width: 90%;
+		}
+
+		#error-table td.params pre {
+			font-size: 10pt;
 		}
 
 		td {
@@ -45,19 +51,37 @@
 		}
 
         .section {
-            padding-left: 8px;
-            padding-right: 8px;
-            padding-bottom: 8px;
+            padding: 8px;
+			padding-top: 0;
             margin-bottom: 8px;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid black;
         }
 
-        body {
-            margin-top: 8px;
-        }
+		.section:last-child {
+			margin-bottom: 0;
+		}
 
-		.breadcrumb {
+		.header .breadcrumb {
 			font-weight: bold;
+			text-transform: uppercase;
+		}
+
+		.header .link-bar {
+			font-size: 14pt;
+		}
+
+		.header {
+			background-color: #f2c811;
+			padding-top: 8px;
+		}
+
+		.header a {
+			color: black;
+			text-decoration: underline;
+		}
+
+		a {
+			color: #967100;
 		}
 
 	</style>
@@ -67,16 +91,18 @@
 
 <% content_for :body do %>
 
-	<div class='breadcrumb section'>
-		<a href='/admin'>admin</a> >
-		errors
-	</div>
+	<div class='header'>
+		<div class='breadcrumb section'>
+			<a href='/admin'>admin</a> |
+			errors
+		</div>
 
-	<div class='link-bar section'>
-		<a href='/admin/errors/'>app</a> | 
-		<a href='/admin/errors/404'>404</a> | 
-		<a href='/admin/errors/js'>javascript</a>
-		<a style='float:right;' href='/admin/errors/clear/<%= file %>'>clear log</a>
+		<div class='link-bar section'>
+			<a href='/admin/errors/'>app</a> | 
+			<a href='/admin/errors/404'>404</a> | 
+			<a href='/admin/errors/js'>javascript</a>
+			<a style='float:right;' href='/admin/errors/clear/<%= file %>'>clear log</a>
+		</div>
 	</div>
 
 	<table id='error-table'>
